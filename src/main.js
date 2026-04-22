@@ -21,7 +21,7 @@ function init() {
   });
 
   // Initialize canvas (pan/zoom)
-  initCanvas(() => {});
+  initCanvas(() => { });
 
   // Initialize drag-and-drop
   initDrag();
@@ -47,10 +47,28 @@ function init() {
 function setupToolbar() {
   const editBtn = document.getElementById('btn-edit-mode');
   const addTableBtn = document.getElementById('btn-add-table');
-  const clearBtn = document.getElementById('btn-clear-all');
   const themeBtn = document.getElementById('btn-theme-toggle');
+  const clearBtn = document.getElementById('btn-clear-all');
 
   let isEditMode = false;
+
+  if (clearBtn) {
+    clearBtn.addEventListener('click', () => {
+      if (confirm('Reset all data? This will remove all guests, tables, and return to the default layout.')) {
+        resetState();
+        renderAll();
+        renderSidebar();
+        updateStats();
+        isEditMode = false;
+        editBtn.classList.remove('active');
+        addTableBtn.style.display = 'none';
+        setEditMode(false);
+        stateSetEditMode(false);
+        const badgeEl = document.getElementById('edit-mode-badge');
+        badgeEl.classList.remove('visible');
+      }
+    });
+  }
 
   editBtn.addEventListener('click', () => {
     isEditMode = !isEditMode;
@@ -67,22 +85,6 @@ function setupToolbar() {
     addTable();
     renderAll();
     updateStats();
-  });
-
-  clearBtn.addEventListener('click', () => {
-    if (confirm('Reset all data? This will remove all guests, tables, and return to the default layout.')) {
-      resetState();
-      renderAll();
-      renderSidebar();
-      updateStats();
-      isEditMode = false;
-      editBtn.classList.remove('active');
-      addTableBtn.style.display = 'none';
-      setEditMode(false);
-      stateSetEditMode(false);
-      const badgeEl = document.getElementById('edit-mode-badge');
-      badgeEl.classList.remove('visible');
-    }
   });
 
   // Theme toggle
